@@ -147,7 +147,8 @@ public class EchoServer implements Runnable {
 					out.println("You are:");
 					out.println(this.clientSocket.toString());
 					out.println("People online:");
-					out.println(user_list.toString()); 
+					out.println(user_list.toString());
+					out.println(user_base.toString());
 				}
 				// CHAT
 				else if (inputLine.compareToIgnoreCase("CHAT") == 0) {
