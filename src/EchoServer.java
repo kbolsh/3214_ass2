@@ -38,12 +38,11 @@ public class EchoServer implements Runnable {
 	
 	///////////////////////////////////////
 	// Attributes
-	///////////////////////////////////////
-	// EchoServer will have a clientSocket
-	private Socket clientSocket;
-	private String username;
-	private static HashMap <String,Integer> user_base; 
-	private static List <String> user_list;
+	///////////////////////////////////////	
+	private Socket clientSocket;		// socket of the client of a given thread
+	private String username;			// user name of the client on thread
+	private static HashMap <String,Socket> user_base; 	// what is this???
+	private static List <String> user_list;				// sorted list for display
 	
 	///////////////////////////////////////
 	// Constructor
@@ -64,7 +63,7 @@ public class EchoServer implements Runnable {
 	}
 	// Join the list of users
 	synchronized void join_list() {
-		user_base.put(this.username, clientSocket.getPort());
+		user_base.put(this.username, clientSocket);
 		user_list.add(this.username);
 		Collections.sort(user_list);
 	}
@@ -113,7 +112,7 @@ public class EchoServer implements Runnable {
 				// JOIN
 				else if (inputLine.compareToIgnoreCase("JOIN") == 0) {
 					// check if socket already has a username mapped
-					if (user_base.containsValue(this.clientSocket.getPort()) ) {
+					if (user_base.containsValue(this.clientSocket) ) {
 						out.println(" You are '" + this.username + "'.");
 						out.println(" To change your name LEAVE and JOIN again.");
 					}
@@ -125,7 +124,6 @@ public class EchoServer implements Runnable {
 							out.println(" The username '" + inputLine + "' is taken.");
 							out.println(" Enter Username:");
 							inputLine = in.readLine();
-							
 						}
 						this.username = inputLine;
 						this.join_list();
@@ -135,7 +133,7 @@ public class EchoServer implements Runnable {
 				// LEAVE
 				else if (inputLine.compareToIgnoreCase("LEAVE") == 0) {
 					// make sure the user joined
-					if (user_base.containsValue(this.clientSocket.getPort())) {
+					if (user_base.containsValue(this.clientSocket)) {
 						out.println(" No problem. You can join again.");
 						this.leave_list();
 					}
@@ -146,7 +144,7 @@ public class EchoServer implements Runnable {
 				// LIST
 				else if (inputLine.compareToIgnoreCase("LIST") == 0) {
 					// attempted to keep the list sorted with String's compareTo
-					out.print("You are ");
+					out.println("You are:");
 					out.println(this.clientSocket.toString());
 					out.println("People online:");
 					out.println(user_list.toString()); 
@@ -160,7 +158,7 @@ public class EchoServer implements Runnable {
 				else if (inputLine.compareToIgnoreCase("quit") == 0) {
 					threadLog("user disconnected");
 					// clean the user_base (force LEAVE the user)
-					if (user_base.containsValue(this.clientSocket.getPort())) {
+					if (user_base.containsValue(this.clientSocket)) {
 						out.println("< assuming you want to LEAVE >");
 						this.leave_list();
 						threadLog("without LEAVE command");
@@ -205,12 +203,18 @@ public class EchoServer implements Runnable {
 		// Read port number from console
 		int portNumber = Integer.parseInt(args[0]);
 		
+		
+		// Assign bot sockets ?
+		
+		// forget about bots for now ...
+		
 		// Create and populate the user base with test bots
-		user_base = new HashMap<String, Integer>();
-		user_base.put("MasterBot", 0);
-		user_base.put("ExpertBot", 1);
-		user_base.put("MediumBot", 2);
-		user_base.put("EasyBot", 3);
+		//user_base = new HashMap<String, Integer>();
+		user_base = new HashMap<String, Socket>();
+		//user_base.put("MasterBot", 0);
+		//user_base.put("ExpertBot", 1);
+		//user_base.put("MediumBot", 2);
+		//user_base.put("EasyBot", 3);
 		
 		// Keep a separate list of users (sorted) for display 
 		user_list = new ArrayList<String>(user_base.keySet());
