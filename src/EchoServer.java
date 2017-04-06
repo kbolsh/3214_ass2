@@ -146,18 +146,19 @@ public class EchoServer implements Runnable {
 					// attempted to keep the list sorted with String's compareTo
 					out.println("You are:");
 					out.println(this.clientSocket.toString());
-					out.print("People online:");
+					out.println("People online:");
 					
+					//out.println(":debug:");
+					for (Map.Entry<String, Socket> entry : user_base.entrySet()) {
+						out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+					}
 					/*
 					Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 					for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
 						System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 					}
 					*/
-					out.print("  :debug:\n");
-					for (Map.Entry<String, Socket> entry : user_base.entrySet()) {
-						System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-					}
+					
 					//out.println(user_list.toString());
 					//out.println(user_base.toString());
 				}
