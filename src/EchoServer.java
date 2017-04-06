@@ -150,8 +150,11 @@ public class EchoServer implements Runnable {
 					
 					//out.println(":debug:");
 					for (Map.Entry<String, Socket> entry : user_base.entrySet()) {
-						out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+						out.println(entry.getKey() + "," + entry.getValue().getInetAddress());
 					}
+					out.println("end_of_list");
+					out.println(user_list.toString());
+					
 					/*
 					Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 					for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
