@@ -147,8 +147,19 @@ public class EchoServer implements Runnable {
 					out.println("You are:");
 					out.println(this.clientSocket.toString());
 					out.println("People online:");
-					out.println(user_list.toString());
-					out.println(user_base.toString());
+					
+					/*
+					Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+					for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+						System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+					}
+					*/
+					
+					for (Map.Entry<String, Socket> entry : user_base.entrySet()) {
+						System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+					}
+					//out.println(user_list.toString());
+					//out.println(user_base.toString());
 				}
 				// CHAT
 				else if (inputLine.compareToIgnoreCase("CHAT") == 0) {
