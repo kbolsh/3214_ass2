@@ -55,7 +55,7 @@ public class TestClient implements Runnable {
 	///////////////////////////////////////
 	public void run() {
 		
-		System.out.println("INFO: Listener thread started.");
+		System.out.printf("INFO: Listener thread started on port: %d.", this.listenSocket.getLocalPort());
 		
 		try {
 			Thread.sleep(100);
