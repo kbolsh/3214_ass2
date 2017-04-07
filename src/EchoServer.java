@@ -32,7 +32,6 @@
 import java.net.*;
 import java.io.*;
 import java.util.*;
-import java.util.HashMap;
 
 public class EchoServer implements Runnable {
 	
@@ -166,10 +165,12 @@ public class EchoServer implements Runnable {
 					//out.println(user_base.toString());
 				}
 				// CHAT
+				/*
 				else if (inputLine.compareToIgnoreCase("CHAT") == 0) {
 					out.println("---");
 					out.println("here's an address");
 				}
+				*/
 				// QUIT
 				else if (inputLine.compareToIgnoreCase("quit") == 0) {
 					threadLog("user disconnected");

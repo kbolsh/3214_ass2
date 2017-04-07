@@ -44,7 +44,7 @@ public class EchoClient {
         // Read host name and port number from console
         String hostName = args[0];
         int portNumber = Integer.parseInt(args[1]);
-        int listenPort = 3333;
+        //int listenPort = 3333;
 
         try (
     		Socket serverSocket = new Socket(hostName, portNumber);

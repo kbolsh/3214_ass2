@@ -31,6 +31,7 @@
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class TestClient implements Runnable {
 
@@ -40,6 +41,7 @@ public class TestClient implements Runnable {
 	// TestClient will have a listenSocket and accept chatSocket
 	private ServerSocket listenSocket;
 	private static Socket chatSocket;
+	private static HashMap <String,String> users_online;
 	
 	///////////////////////////////////////
 	// Constructor
@@ -150,6 +152,9 @@ public class TestClient implements Runnable {
         String hostName = args[0];
         int portNumber = Integer.parseInt(args[1]);
         int listenPort = portNumber + 10000;
+        
+        // Create the user_online list
+        users_online = new HashMap<String,String>();
 
         try (
     		Socket serverSocket = new Socket(hostName, portNumber);
@@ -174,9 +179,17 @@ public class TestClient implements Runnable {
             	// See if server has something to say 
             	while (in.ready()) {
             		serverOutput = in.readLine();
-            		if (serverOutput.compareToIgnoreCase("---") == 0) {
+            		///////////////////////////////////////////
+            		/* check for special signal from server */
+            		// populate the online users map
+            		if (serverOutput.compareToIgnoreCase("People online:") == 0) {
+            			System.out.println(serverOutput);
             			serverOutput = in.readLine();
-            			System.out.println("*connect*");
+            			while (serverOutput.compareToIgnoreCase("end_of_list") != 0) {
+            				String[] id = serverOutput.split("/"); // split into uname + inet
+            				users_online.put(id[0], id[1]);
+            				serverOutput = in.readLine();
+            			}
             		}
             		else {
             			System.out.println(serverOutput);
@@ -203,6 +216,34 @@ public class TestClient implements Runnable {
                     in.close();
                     stdIn.close();
                     System.exit(0);
+            	}
+            	//
+            	else if (userInput.compareToIgnoreCase("CHAT") == 0) {
+            		System.out.print(" Enter the name of the user to start the chat: ");
+            		userInput = stdIn.readLine();
+            		String address = users_online.get(userInput);
+            		if (address == null) {
+            			System.out.printf(" User %s not found!\n", userInput);
+            			userInput = "list";
+            		}
+            		else {
+            			try {
+            				chatSocket = new Socket(address, listenPort);
+            				// Start the chat session
+                    		System.out.println("*     Chat session sterted    *");
+                    		System.out.println("* Type \"--end\" to end session *");
+                    		chat(stdIn);
+            			} catch (IOException e) {
+            				System.err.println("Address invalid!");
+            				System.err.println(e.getMessage());
+            			}
+            		}
+            	}
+            	// debug command, shows the contents of users_online
+            	else if (userInput.compareToIgnoreCase("LOCAL") == 0) {
+            		for (Map.Entry<String, String> entry : users_online.entrySet()) {
+						System.out.println(entry.getKey() + " / " + entry.getValue());
+					}
             	}
             	// Accepting chat will indicate a start of conversation and break out of loop 
             	else if (((userInput.compareToIgnoreCase("yes") == 0)
