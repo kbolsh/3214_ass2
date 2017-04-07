@@ -53,6 +53,15 @@ public class TestClient implements Runnable {
 		this.listenSocket = listenSocket; 
 	}
 	
+	public static String getKeyByValue(Map<String, String> map, String value) {
+	    for (Map.Entry<String, String> entry : map.entrySet()) {
+	        if (Objects.equals(value, entry.getValue())) {
+	            return entry.getKey();
+	        }
+	    }
+	    return null;
+	}
+	
 	///////////////////////////////////////
 	// The thread body
 	///////////////////////////////////////
@@ -255,9 +264,10 @@ public class TestClient implements Runnable {
             		}
             		else {
             			try {
+            				// connect
             				chatSocket = new Socket(address, listenPort);
             				// Start the chat session
-                    		System.out.println("*     Chat session sterted    *");
+                    		System.out.println("*     Chat session started    *");
                     		System.out.println("* Type \"--end\" to end session *");
                     		first_turn = true;
                     		chat(stdIn, peerName);
@@ -281,7 +291,8 @@ public class TestClient implements Runnable {
             		// Start the chat session
             		System.out.println("*     Chat session sterted    *");
             		System.out.println("* Type \"--end\" to end session *");
-            		String peerName = "NAME";
+            		String peerName = 
+            			getKeyByValue(users_online, chatSocket.getInetAddress().getHostAddress());
             		chat(stdIn, peerName);
             		t = new Thread(new TestClient(listenSocket));
         			t.start();
