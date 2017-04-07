@@ -59,7 +59,7 @@ public class TestClient implements Runnable {
 	            return entry.getKey();
 	        }
 	    }
-	    return null;
+	    return "unknown user";
 	}
 	
 	///////////////////////////////////////
