@@ -282,20 +282,22 @@ public class TestClient implements Runnable {
             	}
             	// CHAT command, handled by peers, no server involved
             	else if (userInput.compareToIgnoreCase("CHAT") == 0) {
+            		
             		System.out.print(" Enter the name of the user to start the chat: ");
             		userInput = stdIn.readLine();
             		serverSocket.getInetAddress();
-					System.out.println("You are ->" + InetAddress.getLocalHost().getHostAddress());
-            				//.getInetAddress().getHostAddress());
+					
             		String peerName = new String(userInput);
             		String address = users_online.get(userInput);
-            		System.out.println(address);
+            		//System.out.println(address);
+            		
             		if (address == null) {
             			System.out.printf(" User %s not found!\n", userInput);
             			userInput = "list";
             		}
             		else if (address.compareTo
             				(InetAddress.getLocalHost().getHostAddress()) == 0) {
+            			System.out.println("You are " + userInput);
             			System.out.printf(" Chat with yourself is not supported.\n", userInput);
             			userInput = "list";
             		}
