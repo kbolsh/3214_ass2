@@ -86,7 +86,7 @@ public class TestClient implements Runnable {
 	///////////////////////////////////////
 	// The CHAT function
 	///////////////////////////////////////
-	public static void chat(BufferedReader stdIn) throws IOException {
+	public static void chat(BufferedReader stdIn, String peerName) throws IOException {
 		try (
             PrintWriter out = new PrintWriter(chatSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
@@ -109,16 +109,28 @@ public class TestClient implements Runnable {
         	
         	while (true) {
         		
-        	// Listen
-    		chatOutput = in.readLine();
-    		System.out.print("unonimous: ");
-    		System.out.println(chatOutput);	
-	        	
-        	// Talk
-    		System.out.print("you: ");
-        	chatInput = stdIn.readLine();
-
-        		// Exit condition
+	        	// Listen
+	    		chatOutput = in.readLine();
+	    		System.out.print("unonimous: ");
+	    		System.out.println(chatOutput);	
+		        // Exit condition (received)
+	    		if (chatOutput.compareToIgnoreCase("--end") == 0) {
+	    			// Close all streams and the socket
+            		System.out.println("Your , disconnecting...");
+            		chatSocket.close();
+            		chatSocket = null;
+                    out.close();
+                    in.close();
+                    //chatBuf.close();
+                    return;
+	    		}
+	    		
+	    		
+	    		
+	        	// Talk
+	    		System.out.print("you: ");
+	        	chatInput = stdIn.readLine();
+        		// Exit condition (send)
 	        	if (chatInput.compareToIgnoreCase("--end") == 0) {
             		// Send the quit command
             		out.println(chatInput);
@@ -227,10 +239,11 @@ public class TestClient implements Runnable {
                     stdIn.close();
                     System.exit(0);
             	}
-            	//
+            	// CHAT command, handled by peers, no server involved
             	else if (userInput.compareToIgnoreCase("CHAT") == 0) {
             		System.out.print(" Enter the name of the user to start the chat: ");
             		userInput = stdIn.readLine();
+            		String peerName = new String(userInput);
             		String address = users_online.get(userInput);
             		if (address == null) {
             			System.out.printf(" User %s not found!\n", userInput);
@@ -243,7 +256,7 @@ public class TestClient implements Runnable {
                     		System.out.println("*     Chat session sterted    *");
                     		System.out.println("* Type \"--end\" to end session *");
                     		first_turn = true;
-                    		chat(stdIn);
+                    		chat(stdIn, peerName);
                     		first_turn = false;
             			} catch (IOException e) {
             				System.err.println("Address invalid!");
@@ -264,7 +277,8 @@ public class TestClient implements Runnable {
             		// Start the chat session
             		System.out.println("*     Chat session sterted    *");
             		System.out.println("* Type \"--end\" to end session *");
-            		chat(stdIn);
+            		String peerName = "NAME";
+            		chat(stdIn, peerName);
             		t = new Thread(new TestClient(listenSocket));
         			t.start();
             	}
