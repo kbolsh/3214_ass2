@@ -177,6 +177,30 @@ public class TestClient implements Runnable {
 	}
 	
 	///////////////////////////////////////
+	// The decline CHAT function
+	///////////////////////////////////////
+	public static void declineChat(BufferedReader stdIn) throws IOException {
+		try (
+	            PrintWriter out = new PrintWriter(chatSocket.getOutputStream(), true);
+	            BufferedReader in = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
+	            //BufferedReader chatBuf = new BufferedReader(new InputStreamReader(System.in));
+	        ) {
+	        	// send the --end command
+				out.println("--end");
+				// close everything
+				chatSocket.close();
+        		chatSocket = null;
+                out.close();
+                in.close();
+	        	
+		} catch (IOException e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace(System.out);
+            System.exit(1);    
+		}
+	        	
+	}
+	///////////////////////////////////////
 	// The main body
 	///////////////////////////////////////
     public static void main(String[] args) throws IOException {
@@ -285,7 +309,7 @@ public class TestClient implements Runnable {
                     		chat(stdIn, peerName);
                     		first_turn = false;
             			} catch (IOException e) {
-            				System.err.println("User unreachable or invitation declined.");
+            				System.err.println("User unreachable.");
             				System.err.println(e.getMessage());
             				return;
             			}
@@ -314,9 +338,8 @@ public class TestClient implements Runnable {
             	else if (((userInput.compareToIgnoreCase("no") == 0)
             			|| (userInput.compareToIgnoreCase("n") == 0))
             			&& (chatSocket != null)) {
-            		// Shake the unwanted socket off
-            		chatSocket.close();
-            		chatSocket = null; // ensure we stay in the loop
+            		// explicitly decline chat
+            		declineChat(stdIn);
             		// Listen for a connection in a separate thread (again)
                 	t = new Thread(new TestClient(listenSocket));
         			t.start();
