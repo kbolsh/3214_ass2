@@ -284,7 +284,7 @@ public class TestClient implements Runnable {
             	else if (userInput.compareToIgnoreCase("CHAT") == 0) {
             		System.out.print(" Enter the name of the user to start the chat: ");
             		userInput = stdIn.readLine();
-            		System.out.println("You are" + serverSocket.getLocalSocketAddress().toString());
+            		System.out.println("You are" + serverSocket.getInetAddress().getHostAddress());
             				//.getInetAddress().getHostAddress());
             		String peerName = new String(userInput);
             		String address = users_online.get(userInput);
