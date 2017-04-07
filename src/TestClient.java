@@ -295,7 +295,7 @@ public class TestClient implements Runnable {
             			userInput = "list";
             		}
             		else if (address.compareTo
-            				(listenSocket.getInetAddress().getHostAddress()) == 0) {
+            				(InetAddress.getLocalHost().getHostAddress()) == 0) {
             			System.out.printf(" Chat with yourself is not supported.\n", userInput);
             			userInput = "list";
             		}
