@@ -127,6 +127,16 @@ public class EchoServer implements Runnable {
 						this.username = inputLine;
 						this.join_list();
 						out.println(" Success! You joined as '"+ username + "'.");
+						
+						// force the list of users to have an idea of who initiates the chat
+						out.println("People online:");
+						
+						//out.println(":debug:");
+						for (Map.Entry<String, Socket> entry : user_base.entrySet()) {
+							out.println(entry.getKey() + entry.getValue().getInetAddress());
+						}
+						out.println("end_of_list");
+						out.println(user_list.toString());
 					}
 				}
 				// LEAVE
