@@ -109,6 +109,8 @@ public class TestClient implements Runnable {
         	String chatOutput;
 
         	if (first_turn) {
+        		// Would be nice to send your name ?
+        		// --- here ---
         		// First message
         		System.out.print("you: ");
             	chatInput = stdIn.readLine();
@@ -263,6 +265,11 @@ public class TestClient implements Runnable {
             		String address = users_online.get(userInput);
             		if (address == null) {
             			System.out.printf(" User %s not found!\n", userInput);
+            			userInput = "list";
+            		}
+            		else if (address.compareTo
+            				(serverSocket.getInetAddress().getHostAddress()) == 0) {
+            			System.out.printf(" Chat with yourself is not supported.\n", userInput);
             			userInput = "list";
             		}
             		else {
