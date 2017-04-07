@@ -289,6 +289,7 @@ public class TestClient implements Runnable {
             			|| (userInput.compareToIgnoreCase("y") == 0))
             			&& (chatSocket != null)) {
             		// Start the chat session
+            		System.out.println(chatSocket.getLocalAddress().getHostAddress());
             		System.out.println("*     Chat session sterted    *");
             		System.out.println("* Type \"--end\" to end session *");
             		String peerName = 
