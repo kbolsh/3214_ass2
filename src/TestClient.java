@@ -111,12 +111,13 @@ public class TestClient implements Runnable {
         		
 	        	// Listen
 	    		chatOutput = in.readLine();
-	    		System.out.print("unonimous: ");
+	    		//System.out.print("unonimous: ");
+	    		System.out.print(peerName + ": ");
 	    		System.out.println(chatOutput);	
 		        // Exit condition (received)
 	    		if (chatOutput.compareToIgnoreCase("--end") == 0) {
 	    			// Close all streams and the socket
-            		System.out.println("Your , disconnecting...");
+            		System.out.println(peerName + " ended conversation, disconnecting...");
             		chatSocket.close();
             		chatSocket = null;
                     out.close();
