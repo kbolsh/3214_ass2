@@ -111,9 +111,7 @@ public class TestClient implements Runnable {
         		
 	        	// Listen
 	    		chatOutput = in.readLine();
-	    		//System.out.print("unonimous: ");
-	    		System.out.print(peerName + ": ");
-	    		System.out.println(chatOutput);	
+	    		
 		        // Exit condition (received)
 	    		if (chatOutput.compareToIgnoreCase("--end") == 0) {
 	    			// Close all streams and the socket
@@ -125,12 +123,17 @@ public class TestClient implements Runnable {
                     //chatBuf.close();
                     return;
 	    		}
+	    		else {
+	    			System.out.print(peerName + ": ");
+		    		System.out.println(chatOutput);	
+	    		}
 	    		
 	    		
 	    		
 	        	// Talk
 	    		System.out.print("you: ");
 	        	chatInput = stdIn.readLine();
+	        	
         		// Exit condition (send)
 	        	if (chatInput.compareToIgnoreCase("--end") == 0) {
             		// Send the quit command
