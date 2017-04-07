@@ -42,6 +42,7 @@ public class TestClient implements Runnable {
 	private ServerSocket listenSocket;
 	private static Socket chatSocket;
 	private static HashMap <String,String> users_online;
+	private static Boolean first_turn;
 	
 	///////////////////////////////////////
 	// Constructor
@@ -95,8 +96,16 @@ public class TestClient implements Runnable {
         	String chatInput;
         	String chatOutput;
 
-        	// Initiator goes first (wait)
-        	Thread.sleep(100);
+        	if (first_turn) {
+        		// First message
+        		System.out.print("you: ");
+            	chatInput = stdIn.readLine();
+            	out.println(chatInput);
+        	}
+        	else {
+        		// Initiator goes first (wait)
+        		Thread.sleep(100);
+        	}
         	
         	while (true) {
         		
@@ -152,7 +161,8 @@ public class TestClient implements Runnable {
         String hostName = args[0];
         int portNumber = Integer.parseInt(args[1]);
         int listenPort = portNumber + 10000;
-        
+        // init the first turn flag for chat
+        first_turn = false;
         // Create the user_online list
         users_online = new HashMap<String,String>();
 
@@ -232,6 +242,7 @@ public class TestClient implements Runnable {
             				// Start the chat session
                     		System.out.println("*     Chat session sterted    *");
                     		System.out.println("* Type \"--end\" to end session *");
+                    		first_turn = true;
                     		chat(stdIn);
             			} catch (IOException e) {
             				System.err.println("Address invalid!");
