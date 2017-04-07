@@ -289,7 +289,6 @@ public class TestClient implements Runnable {
 					
             		String peerName = new String(userInput);
             		String address = users_online.get(userInput);
-            		//System.out.println(address);
             		
             		if (address == null) {
             			System.out.printf(" User %s not found!\n", userInput);
@@ -297,7 +296,7 @@ public class TestClient implements Runnable {
             		}
             		else if (address.compareTo
             				(InetAddress.getLocalHost().getHostAddress()) == 0) {
-            			System.out.println("You are " + userInput);
+            			System.out.println(" You are '" + userInput + "'.");
             			System.out.printf(" Chat with yourself is not supported.\n", userInput);
             			userInput = "list";
             		}
