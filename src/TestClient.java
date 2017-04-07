@@ -244,6 +244,7 @@ public class TestClient implements Runnable {
                     		System.out.println("* Type \"--end\" to end session *");
                     		first_turn = true;
                     		chat(stdIn);
+                    		first_turn = false;
             			} catch (IOException e) {
             				System.err.println("Address invalid!");
             				System.err.println(e.getMessage());
