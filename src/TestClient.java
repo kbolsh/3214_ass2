@@ -74,8 +74,11 @@ public class TestClient implements Runnable {
 			Thread.sleep(100);
 			chatSocket = this.listenSocket.accept();
 			if (chatSocket != null) {
+				String invIP = chatSocket.getInetAddress().getHostAddress();
 				System.out.println();
-				System.out.println("Got a connection on " + chatSocket.getLocalPort());
+				System.out.print("Chat invitation from ");
+				System.out.print(invIP);
+				System.out.println(" [" + getKeyByValue(users_online, invIP) + "]");
 				System.out.print("Start the chat? (yes/no) : ");
 				return;
 			}
@@ -289,7 +292,6 @@ public class TestClient implements Runnable {
             			|| (userInput.compareToIgnoreCase("y") == 0))
             			&& (chatSocket != null)) {
             		// Start the chat session
-            		System.out.println(chatSocket.getLocalAddress().getHostAddress());
             		System.out.println("*     Chat session sterted    *");
             		System.out.println("* Type \"--end\" to end session *");
             		String peerName = 
