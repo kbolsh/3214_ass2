@@ -288,6 +288,7 @@ public class TestClient implements Runnable {
             				//.getInetAddress().getHostAddress());
             		String peerName = new String(userInput);
             		String address = users_online.get(userInput);
+            		System.out.println(address);
             		if (address == null) {
             			System.out.printf(" User %s not found!\n", userInput);
             			userInput = "list";
