@@ -67,12 +67,11 @@ public class TestClient implements Runnable {
 	///////////////////////////////////////
 	public void run() {
 		
-		System.out.printf("INFO: Listener thread started on port: %d.\n",
-										this.listenSocket.getLocalPort());
-		
 		try {
+			// listen for a peer connection
 			Thread.sleep(100);
 			chatSocket = this.listenSocket.accept();
+			
 			if (chatSocket != null) {
 				String invIP = chatSocket.getInetAddress().getHostAddress();
 				System.out.println();
@@ -285,7 +284,7 @@ public class TestClient implements Runnable {
             	else if (userInput.compareToIgnoreCase("CHAT") == 0) {
             		System.out.print(" Enter the name of the user to start the chat: ");
             		userInput = stdIn.readLine();
-            		System.out.println("You are" + listenSocket.getLocalSocketAddress().toString());
+            		System.out.println("You are" + serverSocket.getLocalSocketAddress().toString());
             				//.getInetAddress().getHostAddress());
             		String peerName = new String(userInput);
             		String address = users_online.get(userInput);

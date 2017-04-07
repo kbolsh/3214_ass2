@@ -88,7 +88,7 @@ public class EchoServer implements Runnable {
 			
 			// Welcome message
 			out.println("=======================================");
-			out.println("|| Welcome to Ass1 Server!           ||");
+			out.println("|| Welcome to 3214 Chat Server!      ||");
 			out.println("|| Type HELP for available commands. ||");
 			out.println("=======================================");
 			
@@ -152,35 +152,19 @@ public class EchoServer implements Runnable {
 				}
 				// LIST
 				else if (inputLine.compareToIgnoreCase("LIST") == 0) {
-					// attempted to keep the list sorted with String's compareTo
-					out.println("You are:");
-					out.println(this.clientSocket.toString());
+					
 					out.println("People online:");
 					
-					//out.println(":debug:");
+					// send the user_base information to the client 
 					for (Map.Entry<String, Socket> entry : user_base.entrySet()) {
 						out.println(entry.getKey() + entry.getValue().getInetAddress());
 					}
 					out.println("end_of_list");
+					
+					// display sorted list of user names
 					out.println(user_list.toString());
 					
-					/*
-					Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-					for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
-						System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-					}
-					*/
-					
-					//out.println(user_list.toString());
-					//out.println(user_base.toString());
 				}
-				// CHAT
-				/*
-				else if (inputLine.compareToIgnoreCase("CHAT") == 0) {
-					out.println("---");
-					out.println("here's an address");
-				}
-				*/
 				// QUIT
 				else if (inputLine.compareToIgnoreCase("quit") == 0) {
 					threadLog("user disconnected");
@@ -230,18 +214,10 @@ public class EchoServer implements Runnable {
 		// Read port number from console
 		int portNumber = Integer.parseInt(args[0]);
 		
-		
-		// Assign bot sockets ?
-		
-		// forget about bots for now ...
-		
-		// Create and populate the user base with test bots
-		//user_base = new HashMap<String, Integer>();
+		// Create the user_base
 		user_base = new HashMap<String, Socket>();
-		//user_base.put("MasterBot", 0);
-		//user_base.put("ExpertBot", 1);
-		//user_base.put("MediumBot", 2);
-		//user_base.put("EasyBot", 3);
+		// assignment 1 had bots in user_base for testing
+		// bots do not make sense for the purpose of this assignment
 		
 		// Keep a separate list of users (sorted) for display 
 		user_list = new ArrayList<String>(user_base.keySet());
@@ -256,7 +232,7 @@ public class EchoServer implements Runnable {
 			BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 			
 			while (true) {
-				// There is a client, create a thread 
+				// Client connected, create a thread 
 				if (clientSocket != null) {
 					Thread t = new Thread(new EchoServer(clientSocket));
 					t.start();
