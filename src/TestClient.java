@@ -285,8 +285,9 @@ public class TestClient implements Runnable {
                     		chat(stdIn, peerName);
                     		first_turn = false;
             			} catch (IOException e) {
-            				System.err.println("Address invalid!");
+            				System.err.println("User unreachable or invitation declined.");
             				System.err.println(e.getMessage());
+            				return;
             			}
             		}
             	}
