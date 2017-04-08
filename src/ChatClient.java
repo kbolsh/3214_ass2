@@ -298,6 +298,14 @@ public class ChatClient implements Runnable {
             	// CHAT command, handled by peers, no server involved
             	else if (userInput.compareToIgnoreCase("CHAT") == 0) {
             		
+            		String local_IP = InetAddress.getLocalHost().getHostAddress();
+            		
+            		// check if you joined yourself
+            		if (!users_online.containsValue(local_IP)) {
+            			System.out.print("You have to JOIN before initiating a chat.");
+            			continue;
+            		}
+            		
             		System.out.print(" Enter the name of the user to start the chat: ");
             		userInput = stdIn.readLine();
             		serverSocket.getInetAddress();
@@ -310,8 +318,7 @@ public class ChatClient implements Runnable {
             			System.out.printf(" Use LIST to see who is online.\n");
             			//userInput = "list";
             		}
-            		else if (address.compareTo	// avoid chat with yourself
-            				(InetAddress.getLocalHost().getHostAddress()) == 0) {
+            		else if (address.compareTo(local_IP) == 0) { // avoid chat with yourself
             			System.out.println(" You are '" + userInput + "'.");
             			System.out.printf(" Chat with yourself is not supported.\n", userInput);
             			userInput = "list";
