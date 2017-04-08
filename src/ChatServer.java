@@ -33,21 +33,21 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
-public class EchoServer implements Runnable {
+public class ChatServer implements Runnable {
 	
 	///////////////////////////////////////
 	// Attributes
 	///////////////////////////////////////	
 	private Socket clientSocket;		// socket of the client of a given thread
 	private String username;			// user name of the client on thread
-	private static HashMap <String,Socket> user_base; 	// what is this???
+	private static HashMap <String,Socket> user_base;
 	private static List <String> user_list;				// sorted list for display
 	
 	///////////////////////////////////////
 	// Constructor
 	///////////////////////////////////////
 	// Constructor with the socket
-	public EchoServer(Socket clientSocket) {
+	public ChatServer(Socket clientSocket) {
 		// a thread now needs a clientSocket
 		this.clientSocket = clientSocket; 
 	}
@@ -103,6 +103,7 @@ public class EchoServer implements Runnable {
 					out.println("Available commands:");
 					out.println("[ HELP - prints this list ]");
 					out.println("[ HELLO - simple greeting ]");
+					out.println("[ CHAT - initiate a chat  ]");
 					out.println("[ JOIN - prints this list ]");
 					out.println("[ LEAVE - prints this list ]");
 					out.println("[ LIST - prints this list ]");
@@ -234,7 +235,7 @@ public class EchoServer implements Runnable {
 			while (true) {
 				// Client connected, create a thread 
 				if (clientSocket != null) {
-					Thread t = new Thread(new EchoServer(clientSocket));
+					Thread t = new Thread(new ChatServer(clientSocket));
 					t.start();
 					clientSocket = null;
 				}

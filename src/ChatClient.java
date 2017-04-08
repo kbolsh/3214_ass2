@@ -33,7 +33,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class TestClient implements Runnable {
+public class ChatClient implements Runnable {
 
 	///////////////////////////////////////
 	// Attributes
@@ -48,7 +48,7 @@ public class TestClient implements Runnable {
 	// Constructor
 	///////////////////////////////////////
 	// Constructor with the socket
-	public TestClient(ServerSocket listenSocket) {
+	public ChatClient(ServerSocket listenSocket) {
 		// a thread now needs a listenSocket
 		this.listenSocket = listenSocket; 
 	}
@@ -228,7 +228,7 @@ public class TestClient implements Runnable {
         ) {
         	
         	// Listen for a connection in a separate thread
-        	Thread t = new Thread(new TestClient(listenSocket));
+        	Thread t = new Thread(new ChatClient(listenSocket));
 			t.start();
         	
         	// go?
@@ -333,7 +333,7 @@ public class TestClient implements Runnable {
             		String peerName = 
             			getKeyByValue(users_online, chatSocket.getInetAddress().getHostAddress());
             		chat(stdIn, peerName);
-            		t = new Thread(new TestClient(listenSocket));
+            		t = new Thread(new ChatClient(listenSocket));
         			t.start();
             	}
             	//
@@ -343,7 +343,7 @@ public class TestClient implements Runnable {
             		// explicitly decline chat
             		declineChat(stdIn);
             		// Listen for a connection in a separate thread (again)
-                	t = new Thread(new TestClient(listenSocket));
+                	t = new Thread(new ChatClient(listenSocket));
         			t.start();
             	}
             	// Send the command to the server
