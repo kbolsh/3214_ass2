@@ -41,8 +41,8 @@ public class ChatClient implements Runnable {
 	// TestClient will have a listenSocket and accept chatSocket
 	private ServerSocket listenSocket;
 	private static Socket chatSocket;
-	private static HashMap <String,String> users_online;
-	private static Boolean first_turn;
+	private static HashMap <String,String> users_online; // local registry of users
+	private static Boolean first_turn;	// simplifies the chat "protocol"
 	
 	///////////////////////////////////////
 	// Constructor
@@ -53,6 +53,9 @@ public class ChatClient implements Runnable {
 		this.listenSocket = listenSocket; 
 	}
 	
+	///////////////////////////////////////
+	// Key lookup helper
+	///////////////////////////////////////
 	public static String getKeyByValue(Map<String, String> map, String value) {
 	    for (Map.Entry<String, String> entry : map.entrySet()) {
 	        if (Objects.equals(value, entry.getValue())) {
@@ -119,10 +122,12 @@ public class ChatClient implements Runnable {
         		// Initiator goes first (wait)
         		Thread.sleep(100);
         	}
-        	
+        	////////////////////
+        	// chat main loop //
+        	////////////////////
         	while (true) {
         		
-	        	// Listen
+	        	// --- Listen ---
 	    		chatOutput = in.readLine();
 	    		
 		        // Exit condition (received)
@@ -141,9 +146,7 @@ public class ChatClient implements Runnable {
 		    		System.out.println(chatOutput);	
 	    		}
 	    		
-	    		
-	    		
-	        	// Talk
+	        	// --- Talk ---
 	    		System.out.print("you: ");
 	        	chatInput = stdIn.readLine();
 	        	
@@ -197,8 +200,8 @@ public class ChatClient implements Runnable {
             e.printStackTrace(System.out);
             System.exit(1);    
 		}
-	        	
 	}
+	
 	///////////////////////////////////////
 	// The main body
 	///////////////////////////////////////
@@ -213,10 +216,11 @@ public class ChatClient implements Runnable {
         // Read host name and port number from console
         String hostName = args[0];
         int portNumber = Integer.parseInt(args[1]);
+        // Assign a pre-defined port for P2P listening
         int listenPort = portNumber + 10000;
         // init the first turn flag for chat
         first_turn = false;
-        // Create the user_online list
+        // Create the users_online registry
         users_online = new HashMap<String,String>();
 
         try (
@@ -231,7 +235,6 @@ public class ChatClient implements Runnable {
         	Thread t = new Thread(new ChatClient(listenSocket));
 			t.start();
         	
-        	// go?
         	String userInput;
         	String serverOutput;
 
@@ -242,8 +245,13 @@ public class ChatClient implements Runnable {
             	// See if server has something to say 
             	while (in.ready()) {
             		serverOutput = in.readLine();
-            		///////////////////////////////////////////
-            		/* check for special signal from server */
+            		//////////////////////////////////////////////////
+            		// check for special signal from server:
+            		// "People online:" is a signal for the list start
+            		// "end_of_list" is a signal for list end
+            		// Names and IP addresses are received and stored
+            		//////////////////////////////////////////////////
+            		
             		// populate the online users map
             		if (serverOutput.compareToIgnoreCase("People online:") == 0) {
             			System.out.println(serverOutput);
@@ -258,12 +266,19 @@ public class ChatClient implements Runnable {
             			System.out.println(serverOutput);
             		}
             	}
+            	
             	// Prompt
             	System.out.print(">");
+            	
             	// Get a command
             	userInput = stdIn.readLine();
             	
-            	// QUIT is a special command
+            	
+            	//////////////////////////////////////////
+            	// process the command : local or remote?
+            	//////////////////////////////////////////
+            	
+            	// QUIT is a special (obvious) command
             	if (userInput.compareToIgnoreCase("QUIT") == 0) {
             		// Send the quit command
             		out.println(userInput);
@@ -290,16 +305,18 @@ public class ChatClient implements Runnable {
             		String peerName = new String(userInput);
             		String address = users_online.get(userInput);
             		
-            		if (address == null) {
+            		if (address == null) {	// user is not in the local registry
             			System.out.printf(" User %s not found!\n", userInput);
-            			userInput = "list";
+            			System.out.printf(" Use LIST to see who is online.\n");
+            			//userInput = "list";
             		}
-            		else if (address.compareTo
+            		else if (address.compareTo	// avoid chat with yourself
             				(InetAddress.getLocalHost().getHostAddress()) == 0) {
             			System.out.println(" You are '" + userInput + "'.");
             			System.out.printf(" Chat with yourself is not supported.\n", userInput);
             			userInput = "list";
             		}
+            		// valid user
             		else {
             			try {
             				// connect
@@ -307,9 +324,9 @@ public class ChatClient implements Runnable {
             				// Start the chat session
                     		System.out.println("*     Chat session started    *");
                     		System.out.println("* Type \"--end\" to end session *");
-                    		first_turn = true;
+                    		first_turn = true;	// initiator goes first
                     		chat(stdIn, peerName);
-                    		first_turn = false;
+                    		first_turn = false;	// reset when done
             			} catch (IOException e) {
             				System.err.println("User unreachable.");
             				System.err.println(e.getMessage());
@@ -317,13 +334,15 @@ public class ChatClient implements Runnable {
             			}
             		}
             	}
-            	// debug command, shows the contents of users_online
+            	// LOCAL (debug) command, shows the contents of users_online
+            	// (left in intentionally)
             	else if (userInput.compareToIgnoreCase("LOCAL") == 0) {
             		for (Map.Entry<String, String> entry : users_online.entrySet()) {
 						System.out.println(entry.getKey() + " / " + entry.getValue());
 					}
             	}
-            	// Accepting chat will indicate a start of conversation and break out of loop 
+            	// YES for accepting chat
+            	// will indicate a start of conversation and break out of loop 
             	else if (((userInput.compareToIgnoreCase("yes") == 0)
             			|| (userInput.compareToIgnoreCase("y") == 0))
             			&& (chatSocket != null)) {
@@ -340,6 +359,14 @@ public class ChatClient implements Runnable {
             	else if (((userInput.compareToIgnoreCase("no") == 0)
             			|| (userInput.compareToIgnoreCase("n") == 0))
             			&& (chatSocket != null)) {
+            		// explicitly decline chat
+            		declineChat(stdIn);
+            		// Listen for a connection in a separate thread (again)
+                	t = new Thread(new ChatClient(listenSocket));
+        			t.start();
+            	}
+            	else if (chatSocket != null) {
+            		System.out.println("Illegal response, chat will be declined. (no)");
             		// explicitly decline chat
             		declineChat(stdIn);
             		// Listen for a connection in a separate thread (again)
